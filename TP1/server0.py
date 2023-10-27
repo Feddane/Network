@@ -9,8 +9,8 @@ print("Server started")
 
 while True:
     server.listen(4)
-    conn, adress = server.accept()
+    conn, address = server.accept()
     print("Connection listening  ")
 
-conn.close()
+    conn.close()
 server.close()
