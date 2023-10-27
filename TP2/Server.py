@@ -1,5 +1,7 @@
 import socket
 
+import select
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 host, port = "127.0.0.1", 9999
@@ -8,7 +10,7 @@ server.bind((host, port))
 server.listen(4)
 
 client_connected = True
-socket.objs = [server]
+socket_objs = [server]
 
 print("Welcome to the chat !!!")
 
