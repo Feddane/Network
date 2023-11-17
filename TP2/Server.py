@@ -12,7 +12,7 @@ server.listen(4)
 client_connected = True
 socket_objs = [server]
 
-print("Welcome to the chat !!!")
+print("Bienvenue dans le chat !!!")
 
 while client_connected:
     list_lue, list_accee_Ecrit, exception = select.select(
@@ -30,7 +30,7 @@ while client_connected:
             # on essaie de recuperer le message envoyer au serveur
             donnees_recus = socket_obj.recv(128).decode('utf-8')
 
-            # si les donnees ne sont pas vide/ client connecte
+            # si les donnees ne sont pas vide == client connecte
             if donnees_recus:
                 print(donnees_recus)
 
