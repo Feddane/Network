@@ -29,6 +29,7 @@ client.connect((host, port))
 
 
 nom = input('Quel est votre nom ? ')
+client.send(nom.encode('utf-8'))
 
 
 client.send(f"{nom} a rejoint le chatroom.".encode('utf-8'))
