@@ -1,75 +1,86 @@
 import socket
+import threading
 import select
 
-# Créer un objet socket pour le serveur
+# Crée un objet socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Définir l'hôte et le port sur lequel le serveur écoutera
+# Définit l'hôte (adresse IP) et le port sur lequel le serveur écoutera
 host, port = "127.0.0.1", 9999
 
-# Lier le serveur à l'hôte et au port spécifiés
+# Associe le serveur à l'adresse et au port spécifiés
 server.bind((host, port))
-# Définir le nombre maximal de connexions en attente
+
+# Configure le serveur pour écouter jusqu'à 5 connexions simultanées
 server.listen(5)
 
-# Créer une liste contenant le socket du serveur
+# Liste des objets socket, y compris le serveur lui-même
 socket_objs = [server]
 
-# Afficher un message de bienvenue
+# Affiche un message de bienvenue
 print("Bienvenue dans le chatroom !!!")
 
-# Ajouter un dictionnaire pour stocker les noms associés aux sockets clients
+# Dictionnaire pour stocker les noms des clients
 client_noms = {}
 
-# Fonction pour diffuser un message à tous les clients sauf à l'émetteur
+# Fonction pour gérer la connexion d'un client
+def handle_client_connection(client_socket):
+    try:
+        while True:
+            # Reçoit des données du client
+            data = client_socket.recv(128).decode('utf-8')
+
+            # Si le client se déconnecte, le retire de la liste des sockets (s'il est encore présent)
+            if not data:
+                if client_socket in socket_objs:
+                    socket_objs.remove(client_socket)
+                    print(f"{client_noms[client_socket]} s'est déconnecté")
+                    broadcast(server, client_socket, f"{client_noms[client_socket]} s'est déconnecté.")
+                continue
+
+            # Traite le message reçu
+            message = f"{data}"
+            print(message)
+            broadcast(server, client_socket, message)
+
+    except:
+        if client_socket in socket_objs:
+            socket_objs.remove(client_socket)
+            print(f"{client_noms[client_socket]} s'est déconnecté")
+            broadcast(server, client_socket, f"{client_noms[client_socket]} s'est déconnecté.")
+            print(f"{len(socket_objs) - 1} participants restants")
+
+# Fonction pour diffuser un message à tous les clients sauf l'émetteur
 def broadcast(server_socket, sender_socket, message):
     for socket_obj in socket_objs:
         if socket_obj != server_socket and socket_obj != sender_socket:
             try:
-                socket_obj.send(f"{message}".encode('utf-8'))
+                socket_obj.send(message.encode('utf-8'))
             except:
-                # Gérer les erreurs de connexion et supprimer le socket défectueux
                 socket_objs.remove(socket_obj)
 
 # Boucle principale du serveur
 while True:
-    # Utiliser select pour surveiller les sockets en lecture
-    list_lue, list_accee_Ecrit, exception = select.select(
-        socket_objs, [], socket_objs)
+    # Utilise select pour surveiller les sockets prêts à être lus, écrits, ou en erreur
+    readable_sockets, _, _ = select.select(socket_objs, [], socket_objs)
 
-    # Parcourir les sockets prêts à être lus
-    for socket_obj in list_lue:
-        # Vérifier si le socket en cours est le socket du serveur
+    # Parcourt les sockets prêts à être lus
+    for socket_obj in readable_sockets:
         if socket_obj is server:
-            # Accepter la connexion du client
+            # Nouvelle connexion entrante
             client, address = server.accept()
-            # Ajouter le socket client à la liste des sockets
             socket_objs.append(client)
-            # Demander le nom au client
+
+            # Demande au client son nom
             client_name = client.recv(128).decode('utf-8')
-            # Associer le nom du client à son socket dans le dictionnaire
             client_noms[client] = client_name
 
-            # Afficher un message indiquant qu'un nouveau participant a rejoint le chatroom
             print(f"Nouveau participant {client_name} connecté depuis {address}")
-            # Diffuser le message à tous les clients
             broadcast(server, client, f"{client_name} a rejoint le chatroom.")
-        else:
-            try:
-                # Recevoir des données du client
-                donnees_recues = socket_obj.recv(128).decode('utf-8')
 
-                if donnees_recues:
-                    # Afficher les données reçues
-                    print(donnees_recues)
-                    # Diffuser le message à tous les clients
-                    broadcast(server, socket_obj, donnees_recues)
-            except ConnectionResetError:
-                # Gérer les erreurs de connexion et supprimer le socket défectueux
-                socket_objs.remove(socket_obj)
-                # Afficher un message indiquant qu'un client s'est déconnecté
-                print(client_noms[socket_obj] + " s'est déconnecté")
-                # Diffuser le message à tous les clients
-                broadcast(server, socket_obj, client_noms[socket_obj] + " s'est déconnecté.")
-                # Afficher le nombre de participants restants
-                print(f"{len(socket_objs) - 1} participants restants")
+            # Crée un thread pour gérer la connexion du client
+            thread = threading.Thread(target=handle_client_connection, args=(client,))
+            thread.start()
+        else:
+            # Gère les messages entrants des clients existants
+            handle_client_connection(socket_obj)
