@@ -13,6 +13,7 @@ def receive_messages(client_socket):
                 break
             # Afficher le message reçu
             print(message)
+            
     except Exception as e:
         # Gérer les erreurs de réception
         print(f"Erreur de réception : {e}")
