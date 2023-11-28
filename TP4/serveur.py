@@ -22,6 +22,12 @@ def gestion_client(client, address):
             if not donnees_recues:
                 print(f"Le client {address} s'est déconnecté.")
                 socket_objs.remove(client)  # Retirer la socket fermée de la liste
+
+                # Envoyer le score final avant de fermer la connexion
+                score_final_message = f"Fin de la partie!\nScore Final - Joueur: {score_joueur}, Ordinateur: {score_ordinateur}"
+                client.send(score_final_message.encode("utf-8"))
+                
+                # Sortir de la boucle pour fermer la connexion
                 break
 
             joueur = donnees_recues.strip().lower()
@@ -52,8 +58,6 @@ def gestion_client(client, address):
                     resultat = f"Perdu! {ordinateur} bat {joueur}"
                     score_ordinateur += 1
 
-                # Pas besoin d'afficher le score ici
-
                 # Envoyer le résultat du jeu au client
                 client.send(resultat.encode("utf-8"))
             else:
@@ -66,6 +70,7 @@ def gestion_client(client, address):
             break
 
     client.close()
+
 
 
 
