@@ -59,7 +59,7 @@ def broadcast(server_socket, sender_socket, message):
             except:
                 socket_objs.remove(socket_obj)
 
-# Boucle principale du serveur
+# Boucle principale  serveur
 while True:
     # Utilise select pour surveiller les sockets prêts à être lus, écrits, ou en erreur
     readable_sockets, _, _ = select.select(socket_objs, [], socket_objs)
