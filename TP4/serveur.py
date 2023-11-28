@@ -1,86 +1,93 @@
 import socket
-import threading
 import select
+from random import randint
+import threading
 
-# Crée un objet socket
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def gestion_client(client, address):
+    jeu = ["pierre", "papier", "ciseaux"]
+    score_joueur = 0
+    score_ordinateur = 0
+    
+    print(f"Nouveau client connecté : {address}")
 
-# Définit l'hôte (adresse IP) et le port sur lequel le serveur écoutera
-host, port = "127.0.0.1", 9999
+    while True:
+        try:
+            list_lue, _, _ = select.select([client], [], [], 1)
 
-# Associe le serveur à l'adresse et au port spécifiés
-server.bind((host, port))
-
-# Configure le serveur pour écouter jusqu'à 5 connexions simultanées
-server.listen(5)
-
-# Liste des objets socket, y compris le serveur lui-même
-socket_objs = [server]
-
-# Affiche un message de bienvenue
-print("Bienvenue dans le chatroom !!!")
-
-# Dictionnaire pour stocker les noms des clients
-client_noms = {}
-
-# Fonction pour gérer la connexion d'un client
-def handle_client_connection(client_socket):
-    try:
-        while True:
-            # Reçoit des données du client
-            data = client_socket.recv(128).decode('utf-8')
-
-            # Si le client se déconnecte, le retire de la liste des sockets (s'il est encore présent)
-            if not data:
-                if client_socket in socket_objs:
-                    socket_objs.remove(client_socket)
-                    print(f"{client_noms[client_socket]} s'est déconnecté")
-                    broadcast(server, client_socket, f"{client_noms[client_socket]} s'est déconnecté.")
+            if list_lue:
+                donnees_recues = client.recv(128).decode('utf-8')
+            else:
                 continue
 
-            # Traite le message reçu
-            message = f"{data}"
-            print(message)
-            broadcast(server, client_socket, message)
+            if not donnees_recues:
+                print(f"Le client {address} s'est déconnecté.")
+                socket_objs.remove(client)  # Retirer la socket fermée de la liste
+                break
 
-    except:
-        if client_socket in socket_objs:
-            socket_objs.remove(client_socket)
-            print(f"{client_noms[client_socket]} s'est déconnecté")
-            broadcast(server, client_socket, f"{client_noms[client_socket]} s'est déconnecté.")
-            print(f"{len(socket_objs) - 1} participants restants")
+            joueur = donnees_recues.strip().lower()
 
-# Fonction pour diffuser un message à tous les clients sauf l'émetteur
-def broadcast(server_socket, sender_socket, message):
-    for socket_obj in socket_objs:
-        if socket_obj != server_socket and socket_obj != sender_socket:
-            try:
-                socket_obj.send(message.encode('utf-8'))
-            except:
-                socket_objs.remove(socket_obj)
+            if joueur == 'fin':
+                print(f"Le client {address} a quitté la partie.")
+                socket_objs.remove(client)  # Retirer la socket fermée de la liste
 
-# Boucle principale  serveur
-while True:
-    # Utilise select pour surveiller les sockets prêts à être lus, écrits, ou en erreur
-    readable_sockets, _, _ = select.select(socket_objs, [], socket_objs)
+                # Envoyer le score final avant de fermer la connexion
+                score_final_message = f"Fin de la partie!\nScore Final - Joueur: {score_joueur}, Ordinateur: {score_ordinateur}"
+                client.send(score_final_message.encode("utf-8"))
+                
+                # Sortir de la boucle pour fermer la connexion
+                break
+            elif joueur in jeu:
+                # L'ordinateur fait un choix aléatoire
+                ordinateur = jeu[randint(0, 2)]
+                
+                # Logique du jeu
+                if joueur == ordinateur:
+                    resultat = "Egalité!"
+                elif (joueur == "pierre" and ordinateur == "ciseaux") or \
+                    (joueur == "papier" and ordinateur == "pierre") or \
+                    (joueur == "ciseaux" and ordinateur == "papier"):
+                    resultat = f"Gagné! {joueur} bat {ordinateur}"
+                    score_joueur += 1
+                else:
+                    resultat = f"Perdu! {ordinateur} bat {joueur}"
+                    score_ordinateur += 1
 
-    # Parcourt les sockets prêts à être lus
-    for socket_obj in readable_sockets:
+                # Pas besoin d'afficher le score ici
+
+                # Envoyer le résultat du jeu au client
+                client.send(resultat.encode("utf-8"))
+            else:
+                print("Choix non valide. Veuillez choisir entre pierre, papier et ciseaux.")
+                client.send("Choix non valide. Veuillez choisir entre pierre, papier et ciseaux.".encode("utf-8"))
+
+        except Exception as e:
+            print(f"Erreur lors de la gestion du client {address} : {e}")
+            socket_objs.remove(client)
+            break
+
+    client.close()
+
+
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+host, port = "127.0.0.1", 9999
+
+server.bind((host, port))
+server.listen(4)
+
+client_connected = True
+socket_objs = [server]  # Ajouter le serveur à la liste
+
+print("Bienvenue dans le jeu de pierre-papier-ciseaux!")
+
+while client_connected:
+    list_lue, _, _ = select.select(socket_objs, [], socket_objs)
+
+    for socket_obj in list_lue:
         if socket_obj is server:
-            # Nouvelle connexion entrante
             client, address = server.accept()
             socket_objs.append(client)
-
-            # Demande au client son nom
-            client_name = client.recv(128).decode('utf-8')
-            client_noms[client] = client_name
-
-            print(f"Nouveau participant {client_name} connecté depuis {address}")
-            broadcast(server, client, f"{client_name} a rejoint le chatroom.")
-
-            # Crée un thread pour gérer la connexion du client
-            thread = threading.Thread(target=handle_client_connection, args=(client,))
-            thread.start()
+            threading.Thread(target=gestion_client, args=(client, address)).start()
         else:
-            # Gère les messages entrants des clients existants
-            handle_client_connection(socket_obj)
+            continue
