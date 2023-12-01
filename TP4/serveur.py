@@ -3,12 +3,17 @@ import threading
 
 def handle_client(conn, player):
     global current_round, game_ended
+
+    player_name = conn.recv(1024).decode('utf-8')
+    print(f"{player_name} joined the game.")
+
+
     while True:
         choice = conn.recv(1024).decode('utf-8')
         if not choice or choice.lower() == 'exit':
-            print(f"Player {player} has left the game.")
+            print(f"{player_name} has left the game.")
             break
-        print(f"Player {player} choice: {choice}")
+        print(f"{player_name} choice: {choice}")
         choices[player - 1] = choice
 
         # Check if both players have made their choices
@@ -82,7 +87,7 @@ while True:
     conn, addr = server.accept()
     player_count += 1
     print(f"Connection from {addr}")
-    print(f"Player {player_count} joined the game.")
+    
     clients.append(conn)
 
     # Start a new thread to handle the current client

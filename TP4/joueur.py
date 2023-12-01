@@ -1,5 +1,13 @@
 import socket
 
+def get_user_name():
+    while True:
+        name = input("Quel est votre nom? ")
+        if name:
+            return name
+        else:
+            print("Le nom ne peut pas être vide.")
+
 def get_user_choice():
     while True:
         choice = input("Enter your choice (rock, paper, scissors) or type 'exit' to leave: ").lower()
@@ -16,6 +24,8 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((host, port))
 
 print("Bienvenue au jeu!")  # Welcome message
+user_name = get_user_name()
+client.send(user_name.encode('utf-8'))
 
 try:
     while True:
