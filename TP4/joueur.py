@@ -24,6 +24,11 @@ try:
 
         if user_choice == 'exit':
             break
+
+        # Receive and display the result after each round
+        result_message = client.recv(1024).decode('utf-8')
+        print(result_message)
+
 except KeyboardInterrupt:
     print("Game interrupted.")
 finally:

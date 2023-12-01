@@ -22,12 +22,19 @@ def handle_client(conn, player):
             print(f"Player 1: {score_player1}")
             print(f"Player 2: {score_player2}\n")
 
+            # Send the result to both clients
+            result_message = f"Round {current_round} result - Player 1: {score_player1}, Player 2: {score_player2}"
+            for client in clients:
+                client.send(result_message.encode('utf-8'))
+
+            # Check if the game has ended
+            if current_round :
+                game_ended = True
+                print(f"\nGame ended after {current_round} rounds.")
+                break
+
     conn.close()
 
-    # # If the game hasn't ended and a player exits, end the game and display the number of rounds played
-    # if not game_ended:
-    #     game_ended = True
-    #     print(f"\nGame ended after {current_round} rounds.")
 
 def determine_winner():
     global score_player1, score_player2
