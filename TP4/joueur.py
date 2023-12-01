@@ -1,8 +1,12 @@
 import socket
 
 def get_user_choice():
-    choice = input("Enter your choice (rock, paper, scissors) or type 'exit' to leave: ").lower()
-    return choice
+    while True:
+        choice = input("Enter your choice (rock, paper, scissors) or type 'exit' to leave: ").lower()
+        if choice in ['rock', 'paper', 'scissors', 'exit']:
+            return choice
+        else:
+            print("Votre choix n'est pas correct, vérifiez l'orthographe!")
 
 # Initialize client
 host = '127.0.0.1'
