@@ -1,98 +1,69 @@
 import socket
-import select
-from random import randint
 import threading
 
-def gestion_client(client, address):
-    jeu = ["pierre", "papier", "ciseaux"]
-    score_joueur = 0
-    score_ordinateur = 0
-    
-    print(f"Nouveau client connecté : {address}")
-
+def handle_client(conn, player):
     while True:
-        try:
-            list_lue, _, _ = select.select([client], [], [], 1)
-
-            if list_lue:
-                donnees_recues = client.recv(128).decode('utf-8')
-            else:
-                continue
-
-            if not donnees_recues:
-                print(f"Le client {address} s'est déconnecté.")
-                socket_objs.remove(client)  # Retirer la socket fermée de la liste
-
-                # Envoyer le score final avant de fermer la connexion
-                score_final_message = f"Fin de la partie!\nScore Final - Joueur: {score_joueur}, Ordinateur: {score_ordinateur}"
-                client.send(score_final_message.encode("utf-8"))
-                
-                # Sortir de la boucle pour fermer la connexion
-                break
-
-            joueur = donnees_recues.strip().lower()
-
-            if joueur == 'fin':
-                print(f"Le client {address} a quitté la partie.")
-                socket_objs.remove(client)  # Retirer la socket fermée de la liste
-
-                # Envoyer le score final avant de fermer la connexion
-                score_final_message = f"Fin de la partie!\nScore Final - Joueur: {score_joueur}, Ordinateur: {score_ordinateur}"
-                client.send(score_final_message.encode("utf-8"))
-                
-                # Sortir de la boucle pour fermer la connexion
-                break
-            elif joueur in jeu:
-                # L'ordinateur fait un choix aléatoire
-                ordinateur = jeu[randint(0, 2)]
-                
-                # Logique du jeu
-                if joueur == ordinateur:
-                    resultat = "Egalité!"
-                elif (joueur == "pierre" and ordinateur == "ciseaux") or \
-                    (joueur == "papier" and ordinateur == "pierre") or \
-                    (joueur == "ciseaux" and ordinateur == "papier"):
-                    resultat = f"Gagné! {joueur} bat {ordinateur}"
-                    score_joueur += 1
-                else:
-                    resultat = f"Perdu! {ordinateur} bat {joueur}"
-                    score_ordinateur += 1
-
-                # Envoyer le résultat du jeu au client
-                client.send(resultat.encode("utf-8"))
-            else:
-                print("Choix non valide. Veuillez choisir entre pierre, papier et ciseaux.")
-                client.send("Choix non valide. Veuillez choisir entre pierre, papier et ciseaux.".encode("utf-8"))
-
-        except Exception as e:
-            print(f"Erreur lors de la gestion du client {address} : {e}")
-            socket_objs.remove(client)
+        choice = conn.recv(1024).decode('utf-8')
+        if not choice or choice.lower() == 'exit':
+            print(f"Player {player} has left the game.")
             break
+        print(f"Player {player} choice: {choice}")
+        choices[player - 1] = choice
 
-    client.close()
+        # Check if both players have made their choices
+        if all(choices):
+            determine_winner()
+            reset_choices()
 
+    conn.close()
 
+def determine_winner():
+    global score_player1, score_player2
+    choices_str = ', '.join(choices)
+    if choices[0] == choices[1]:
+        print("It's a tie!")
+    elif (choices[0] == 'rock' and choices[1] == 'scissors') or \
+         (choices[0] == 'paper' and choices[1] == 'rock') or \
+         (choices[0] == 'scissors' and choices[1] == 'paper'):
+        print(f"Player 1 wins! ({choices_str})")
+        score_player1 += 1
+    else:
+        print(f"Player 2 wins! ({choices_str})")
+        score_player2 += 1
 
+    print("\nScore after this round:")
+    print(f"Player 1: {score_player1}")
+    print(f"Player 2: {score_player2}\n")
+
+def reset_choices():
+    global choices
+    choices = [None, None]
+
+# Initialize server
+host = '127.0.0.1'
+port = 12345
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-host, port = "127.0.0.1", 9999
-
 server.bind((host, port))
-server.listen(4)
+server.listen()
 
-client_connected = True
-socket_objs = [server]  # Ajouter le serveur à la liste
+print(f"Server listening on {host}:{port}")
 
-print("Bienvenue dans le jeu de pierre-papier-ciseaux!")
+# Accept connections from clients
+player_count = 0
+clients = []
 
-while client_connected:
-    list_lue, _, _ = select.select(socket_objs, [], socket_objs)
+# Initialize game state
+choices = [None, None]
+score_player1 = 0
+score_player2 = 0
 
-    for socket_obj in list_lue:
-        if socket_obj is server:
-            client, address = server.accept()
-            socket_objs.append(client)
-            threading.Thread(target=gestion_client, args=(client, address)).start()
-        else:
-            continue
+while True:
+    conn, addr = server.accept()
+    player_count += 1
+    print(f"Connection from {addr}")
+    print(f"Player {player_count} joined the game.")
+    clients.append(conn)
+
+    # Start a new thread to handle the current client
+    threading.Thread(target=handle_client, args=(conn, player_count)).start()
