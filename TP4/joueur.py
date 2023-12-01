@@ -11,6 +11,8 @@ port = 12345
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((host, port))
 
+print("Bienvenue au jeu!")  # Welcome message
+
 try:
     while True:
         user_choice = get_user_choice()

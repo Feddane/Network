@@ -47,6 +47,8 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
 
+print("Bienvenue au jeu!")  # Welcome message
+
 print(f"Server listening on {host}:{port}")
 
 # Accept connections from clients
