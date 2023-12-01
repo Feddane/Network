@@ -7,11 +7,15 @@ def handle_client(conn, player):
     player_name = conn.recv(1024).decode('utf-8')
     print(f"{player_name} joined the game.")
 
+    # Add player name to the list of player names
+    player_names.append(player_name)
+
 
     while True:
         choice = conn.recv(1024).decode('utf-8')
         if not choice or choice.lower() == 'exit':
             print(f"{player_name} has left the game.")
+            game_ended = True  # Set game_ended flag if anyone types exit
             break
         print(f"{player_name} choice: {choice}")
         choices[player - 1] = choice
@@ -24,18 +28,18 @@ def handle_client(conn, player):
             # Increment the current round
             current_round += 1
             print(f"\nScore for round {current_round}:")
-            print(f"Player 1: {score_player1}")
-            print(f"Player 2: {score_player2}\n")
+            print(f"{player_names[0]}: {score_player1}")
+            print(f"{player_names[1]}: {score_player2}\n")
 
             # Send the result to both clients
-            result_message = f"Round {current_round} result - Player 1: {score_player1}, Player 2: {score_player2}"
+            result_message = f"Round {current_round} result - {player_names[0]}: {score_player1}, {player_names[1]}: {score_player2}"
             for client in clients:
                 client.send(result_message.encode('utf-8'))
 
             # Check if the game has ended
-            if game_ended:
-                print(f"\nGame ended after {current_round} rounds.")
-                break
+            # if game_ended:
+            #     print(f"\nGame ended after {current_round} rounds.")
+            #     break
 
     conn.close()
 
@@ -48,10 +52,10 @@ def determine_winner():
     elif (choices[0] == 'rock' and choices[1] == 'scissors') or \
          (choices[0] == 'paper' and choices[1] == 'rock') or \
          (choices[0] == 'scissors' and choices[1] == 'paper'):
-        print(f"Player 1 wins! ({choices_str})")
+        print(f"{player_names[0]} wins! ({choices_str})")
         score_player1 += 1
     else:
-        print(f"Player 2 wins! ({choices_str})")
+        print(f"{player_names[1]} wins! ({choices_str})")
         score_player2 += 1
 
 def reset_choices():
@@ -82,6 +86,9 @@ score_player2 = 0
 # Track the current round and game status
 current_round = 0
 game_ended = False
+
+player_names = [] # Initialize an empty list to store player names
+
 
 while True:
     conn, addr = server.accept()
