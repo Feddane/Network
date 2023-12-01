@@ -2,7 +2,7 @@ import socket
 import threading
 
 def handle_client(conn, player):
-    global current_round, game_ended
+    global current_round
 
     player_name = conn.recv(1024).decode('utf-8')
     print(f"{player_name} joined the game.")
@@ -15,10 +15,12 @@ def handle_client(conn, player):
         choice = conn.recv(1024).decode('utf-8')
         if not choice or choice.lower() == 'exit':
             print(f"{player_name} has left the game.")
-            game_ended = True  # Set game_ended flag if anyone types exit
             break
+
+
         print(f"{player_name} choice: {choice}")
         choices[player - 1] = choice
+
 
         # Check if both players have made their choices
         if all(choices):
@@ -36,11 +38,9 @@ def handle_client(conn, player):
             for client in clients:
                 client.send(result_message.encode('utf-8'))
 
-            # Check if the game has ended
-            # if game_ended:
-            #     print(f"\nGame ended after {current_round} rounds.")
-            #     break
 
+    # Add the following lines after the while loop to print "Game ended" when the player exits
+    print("Game ended")
     conn.close()
 
 
@@ -85,7 +85,6 @@ score_player2 = 0
 
 # Track the current round and game status
 current_round = 0
-game_ended = False
 
 player_names = [] # Initialize an empty list to store player names
 
