@@ -2,6 +2,7 @@ import socket
 import threading
 
 def handle_client(conn, player):
+    global current_round, game_ended
     while True:
         choice = conn.recv(1024).decode('utf-8')
         if not choice or choice.lower() == 'exit':
@@ -15,7 +16,18 @@ def handle_client(conn, player):
             determine_winner()
             reset_choices()
 
+            # Increment the current round
+            current_round += 1
+            print(f"\nScore for round {current_round}:")
+            print(f"Player 1: {score_player1}")
+            print(f"Player 2: {score_player2}\n")
+
     conn.close()
+
+    # # If the game hasn't ended and a player exits, end the game and display the number of rounds played
+    # if not game_ended:
+    #     game_ended = True
+    #     print(f"\nGame ended after {current_round} rounds.")
 
 def determine_winner():
     global score_player1, score_player2
@@ -30,10 +42,6 @@ def determine_winner():
     else:
         print(f"Player 2 wins! ({choices_str})")
         score_player2 += 1
-
-    print("\nScore after this round:")
-    print(f"Player 1: {score_player1}")
-    print(f"Player 2: {score_player2}\n")
 
 def reset_choices():
     global choices
@@ -59,6 +67,10 @@ clients = []
 choices = [None, None]
 score_player1 = 0
 score_player2 = 0
+
+# Track the current round and game status
+current_round = 0
+game_ended = False
 
 while True:
     conn, addr = server.accept()
