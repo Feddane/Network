@@ -28,8 +28,7 @@ def handle_client(conn, player):
                 client.send(result_message.encode('utf-8'))
 
             # Check if the game has ended
-            if current_round :
-                game_ended = True
+            if game_ended:
                 print(f"\nGame ended after {current_round} rounds.")
                 break
 
