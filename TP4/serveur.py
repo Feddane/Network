@@ -36,12 +36,18 @@ def handle_client(conn, player):
 
             # Envoyer le résultat aux deux clients
             result_message = f"Résultat du tour {current_round} - {player_names[0]}: {score_player1}, {player_names[1]}: {score_player2}"
-            for client in clients:
-                client.send(result_message.encode('utf-8'))
+            broadcast(result_message)  
 
     # Ajouter les lignes suivantes après la boucle while pour afficher "Fin du jeu" lorsque le joueur quitte
     print("Fin du jeu")
     conn.close()
+
+
+# Fonction de diffusion du message à tous les clients
+def broadcast(message):
+    for client in clients:
+        client.send(message.encode('utf-8'))
+
 
 # Déterminer le vainqueur du tour
 def determine_winner():
