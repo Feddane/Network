@@ -18,11 +18,13 @@ def get_user_choice():
         else:
             print("Votre choix n'est pas correct, vérifiez l'orthographe !")
 
-# Initialiser le client
+# Définir l'hôte (adresse IP) et le port sur lequel le client se connectera
 host = '127.0.0.1'
 port = 12345
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Se connecte au serveur
 client.connect((host, port))
 
 print("Bienvenue au jeu !")  # Message de bienvenue

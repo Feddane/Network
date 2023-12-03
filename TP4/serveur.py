@@ -79,8 +79,12 @@ host = '127.0.0.1'
 port = 12345
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Associe le serveur à l'adresse et au port spécifiés
 server.bind((host, port))
-server.listen()
+
+# Configure le serveur pour écouter 2 connexions
+server.listen(2)
 
 print("Bienvenue au jeu !")  # Message de bienvenue
 
