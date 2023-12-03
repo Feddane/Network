@@ -9,7 +9,7 @@ def broadcast(message):
 def handle_client(conn, player):
     global current_round
 
-    # Recevoir le nom du joueur du client
+    # Recevoir le nom du joueur
     player_name = conn.recv(1024).decode('utf-8')
     print(f"{player_name} a rejoint le jeu.")  # Afficher que le joueur a rejoint le jeu
 
@@ -17,7 +17,7 @@ def handle_client(conn, player):
     player_names.append(player_name)
 
     while True:
-        # Recevoir le choix du joueur du client
+        # Recevoir le choix du joueur
         choice = conn.recv(1024).decode('utf-8')
         if not choice or choice.lower() == 'exit':
             print(f"{player_name} a quitte le jeu.")  # Afficher que le joueur a quitté le jeu
@@ -61,7 +61,7 @@ def determine_winner():
         print(result_message)
         score_player2 += 1
 
-    #Afficher le score 
+    #Afficher le score
     score_message = f"\nScore pour le tour {current_round}:\n{player_names[0]}: {score_player1}\n{player_names[1]}: {score_player2}\n"
     print(score_message)
 
