@@ -1,6 +1,11 @@
 import socket
 import threading
 
+# Fonction de diffusion du message à tous les clients
+def broadcast(message):
+    for client in clients:
+        client.send(message.encode('utf-8'))
+
 def handle_client(conn, player):
     global current_round
 
@@ -25,44 +30,44 @@ def handle_client(conn, player):
 
         # Vérifier si les deux joueurs ont fait leur choix
         if all(choices):
+            # Incrémenter le tour actuel
+            current_round += 1
+
             determine_winner()
             reset_choices()
 
-            # Incrémenter le tour actuel
-            current_round += 1
-            print(f"\nScore pour le tour {current_round}:")
-            print(f"{player_names[0]}: {score_player1}")
-            print(f"{player_names[1]}: {score_player2}\n")
-
-            # Envoyer le résultat aux deux clients
-            result_message = f"Résultat du tour {current_round} - {player_names[0]}: {score_player1}, {player_names[1]}: {score_player2}"
-            broadcast(result_message)  
-
-    # Ajouter les lignes suivantes après la boucle while pour afficher "Fin du jeu" lorsque le joueur quitte
+    # Afficher "Fin du jeu" lorsque le joueur quitte
     print("Fin du jeu")
     conn.close()
 
 
-# Fonction de diffusion du message à tous les clients
-def broadcast(message):
-    for client in clients:
-        client.send(message.encode('utf-8'))
-
 
 # Déterminer le vainqueur du tour
 def determine_winner():
-    global score_player1, score_player2
+    global score_player1, score_player2, current_round
     choices_str = ', '.join(choices)
+
     if choices[0] == choices[1]:
-        print("C'est une egalite !")
-    elif (choices[0] == 'rock' and choices[1] == 'scissors') or \
-         (choices[0] == 'paper' and choices[1] == 'rock') or \
-         (choices[0] == 'scissors' and choices[1] == 'paper'):
-        print(f"{player_names[0]} gagne ! ({choices_str})")
+        result_message = "C'est une egalite !"
+        print(result_message)
+    elif (choices[0] == 'pierre' and choices[1] == 'ciseaux') or \
+         (choices[0] == 'papier' and choices[1] == 'pierre') or \
+         (choices[0] == 'ciseaux' and choices[1] == 'papier'):
+        result_message = f"{player_names[0]} gagne ! ({choices_str})"
+        print(result_message)
         score_player1 += 1
     else:
-        print(f"{player_names[1]} gagne ! ({choices_str})")
+        result_message = f"{player_names[1]} gagne ! ({choices_str})"
+        print(result_message)
         score_player2 += 1
+
+    #Afficher le score 
+    score_message = f"\nScore pour le tour {current_round}:\n{player_names[0]}: {score_player1}\n{player_names[1]}: {score_player2}\n"
+    print(score_message)
+
+    # Envoyer le résultat et le score au client
+    message = f"{result_message} \n{score_message}"
+    broadcast(message)
 
 # Réinitialiser les choix des joueurs
 def reset_choices():

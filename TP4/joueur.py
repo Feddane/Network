@@ -38,8 +38,8 @@ try:
             break
 
         # Recevoir et afficher le résultat après chaque tour
-        result_message = client.recv(1024).decode('utf-8')
-        print(result_message)
+        message = client.recv(1024).decode('utf-8')
+        print(message)
 
 except KeyboardInterrupt:
     print("Jeu interrompu.")
