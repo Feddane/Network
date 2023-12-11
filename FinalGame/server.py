@@ -1,59 +1,59 @@
 import socket
 import threading
 import pickle
-import random
-import time
 
 # Server configuration
-SERVER_IP = '127.0.0.1'
-SERVER_PORT = 12345
+HOST = '127.0.0.1'
+PORT = 5555
 
-# Pygame setup
-import pygame
-pygame.init()
-
-# Game variables
-score = {'player': 0}
-moles = []
-
-# Initialize the Pygame screen
-screen_width, screen_height = 800, 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Whack-a-Mole Server")
-
-# Initialize server socket
+# Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((SERVER_IP, SERVER_PORT))
-server_socket.listen(1)
-print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
+server_socket.bind((HOST, PORT))
+server_socket.listen()
 
-# Function to handle a client connection
-def handle_client(client_socket):
-    global score, moles
+print(f"Server listening on {HOST}:{PORT}")
 
+# Store connected clients
+clients = []
+
+# Game state
+ball_pos = [400, 300]
+paddle1_pos = [50, 250]
+paddle2_pos = [750, 250]
+
+# Ball speed
+ball_speed = [5, 5]
+
+# Broadcast message to all clients
+def broadcast(message, sender):
+    for client in clients:
+        if client != sender:
+            try:
+                client.send(pickle.dumps(message))
+            except:
+                # Remove disconnected client
+                clients.remove(client)
+
+# Handle client connections
+def handle_client(client):
+    global ball_pos, paddle1_pos, paddle2_pos
     while True:
         try:
-            # Generate moles randomly
-            moles = [{'rect': pygame.Rect(random.randint(0, screen_width - 50), random.randint(0, screen_height - 50), 50, 50),
-                      'active': True} for _ in range(random.randint(1, 3))]
-
-            # Send moles to the client
-            client_socket.send(pickle.dumps(moles))
-
-            # Sleep for a short duration before sending new moles
-            time.sleep(2)
-
-        except Exception as e:
-            print(f"Error handling client: {e}")
+            data = pickle.loads(client.recv(1024))
+            paddle1_pos = data["paddle1_pos"]
+            paddle2_pos = data["paddle2_pos"]
+            broadcast({"ball_pos": ball_pos, "paddle1_pos": paddle1_pos, "paddle2_pos": paddle2_pos}, client)
+        except:
+            # Remove disconnected client
+            clients.remove(client)
             break
 
-    print("Connection closed")
-    client_socket.close()
-
-# Accept client connections
+# Accept and handle client connections
 while True:
-    client_socket, client_address = server_socket.accept()
-    print(f"Connection from {client_address} accepted")
-
+    client, address = server_socket.accept()
+    clients.append(client)
+    print(f"Connection established with {address}")
+    
     # Start a new thread for each client
-    threading.Thread(target=handle_client, args=(client_socket,)).start()
+    thread = threading.Thread(target=handle_client, args=(client,))
+    thread.start()
