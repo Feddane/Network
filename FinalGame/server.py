@@ -30,6 +30,10 @@ lbl.grid(row=2, column=0)
 cell = ''  # stocke la position du dernier coup joué.
 turn = True  # indique si c'est au tour du serveur de jouer.
 
+score_player1 = 0
+score_player2 = 0
+
+
 # Fonction pour recevoir les données du réseau
 # Elle reçoit les données du client, décode le message, met à jour la variable cell et appelle la fonction update.
 def recieveData():
@@ -280,9 +284,19 @@ def check():  # check if a win case exists
 
 # Fonction pour afficher la boîte de dialogue lorsque le jeu est terminé
 def win(player):
+    global score_player1, score_player2
     ans = "Partie terminée " + player + " a gagné !"
+
+    if player == 'X':
+        score_player1 += 1
+    elif player == 'O':
+        score_player2 += 1
+
+    ans += f"\n\nScore:\nJoueur 1 : {score_player1}\nJoueur 2: {score_player2}"
+
     messagebox.showinfo("Félicitations", ans)
     window.destroy()  # is used to close the program
+
 
 
 # Création des boutons pour le jeu
