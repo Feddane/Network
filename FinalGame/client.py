@@ -3,10 +3,7 @@ import threading
 from tkinter import *
 from tkinter import messagebox
 
-# Initialisation de la fenêtre Tkinter
-window = Tk()
-cell = ""
-turn = False
+
 host = "127.0.0.1"
 port = 65535
 
@@ -14,6 +11,8 @@ port = 65535
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((host, port))
 
+# Initialisation de la fenêtre Tkinter
+window = Tk()
 window.title("Welcome player 2 to the game Tic-Tac-Toe")
 window.geometry("400x300")
 
@@ -25,6 +24,9 @@ lbl.grid(row=1, column=0)
 lbl = Label(window, text="Player 2: O", font=('Helvetica', 10))
 lbl.grid(row=2, column=0)
 
+#varibales globales
+cell = ""
+turn = False
 
 # Fonction pour recevoir les données du réseau
 def recieveData():
