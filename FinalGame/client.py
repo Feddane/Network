@@ -13,15 +13,15 @@ client.connect((host, port))
 
 # Initialisation de la fenêtre Tkinter
 window = Tk()
-window.title("Welcome player 2 to the game Tic-Tac-Toe")
+window.title("Bienvenue Joueur 2 au jeu de Tic-Tac-Toe")
 window.geometry("400x300")
 
 # Création des étiquettes dans la fenêtre
-lbl = Label(window, text="Tic-Tac-Toe Game", font=('Helvetica', 15))
+lbl = Label(window, text="Jeu de Tic-Tac-Toe", font=('Helvetica', 15))
 lbl.grid(row=0, column=0)
-lbl = Label(window, text="Player 1: X", font=('Helvetica', 10))
+lbl = Label(window, text="Joueur 1: X", font=('Helvetica', 10))
 lbl.grid(row=1, column=0)
-lbl = Label(window, text="Player 2: O", font=('Helvetica', 10))
+lbl = Label(window, text="Joueur 2: O", font=('Helvetica', 10))
 lbl.grid(row=2, column=0)
 
 #varibales globales
@@ -38,10 +38,9 @@ def recieveData():
         dataa = data2.split('-')
         cell = dataa[0]
         update()
-        if dataa[1] == 'YourTurn':
-            print(cell + " Client turn")
+        if dataa[1] == 'TonTour':
             turn = True
-            print(" Client turn = " + str(turn))
+            print(" Client tour = " + str(turn))
 
 
 # Fonction pour mettre à jour l'interface graphique en fonction des données reçues
@@ -65,7 +64,7 @@ def update():
     elif cell == 'I':
         clicked9()
     else:
-        print("no matching char detected")
+        print("Aucun caractère correspondant détecté")
 
 
 # Fonction pour créer un thread
@@ -86,7 +85,7 @@ def clicked1():
     global cell
     if turn == True and btn1["text"] == " ":
         btn1["text"] = "O"
-        send_data = '{}-{}'.format('A', 'YourTurn').encode()
+        send_data = '{}-{}'.format('A', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -102,7 +101,7 @@ def clicked2():
     global cell
     if turn == True and btn2["text"] == " " and btn2["text"] == " ":
         btn2["text"] = "O"
-        send_data = '{}-{}'.format('B', 'YourTurn').encode()
+        send_data = '{}-{}'.format('B', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -118,7 +117,7 @@ def clicked3():
     global cell
     if turn == True and btn3["text"] == " ":
         btn3["text"] = "O"
-        send_data = '{}-{}'.format('C', 'YourTurn').encode()
+        send_data = '{}-{}'.format('C', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -134,7 +133,7 @@ def clicked4():
     global cell
     if turn == True and btn4["text"] == " ":
         btn4["text"] = "O"
-        send_data = '{}-{}'.format('D', 'YourTurn').encode()
+        send_data = '{}-{}'.format('D', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -150,7 +149,7 @@ def clicked5():
     global cell
     if turn == True and btn5["text"] == " ":
         btn5["text"] = "O"
-        send_data = '{}-{}'.format('E', 'YourTurn').encode()
+        send_data = '{}-{}'.format('E', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -166,7 +165,7 @@ def clicked6():
     global cell
     if turn == True and btn6["text"] == " ":
         btn6["text"] = "O"
-        send_data = '{}-{}'.format('F', 'YourTurn').encode()
+        send_data = '{}-{}'.format('F', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -182,7 +181,7 @@ def clicked7():
     global cell
     if turn == True and btn7["text"] == " ":
         btn7["text"] = "O"
-        send_data = '{}-{}'.format('G', 'YourTurn').encode()
+        send_data = '{}-{}'.format('G', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -198,7 +197,7 @@ def clicked8():
     global cell
     if turn == True and btn8["text"] == " ":
         btn8["text"] = "O"
-        send_data = '{}-{}'.format('H', 'YourTurn').encode()
+        send_data = '{}-{}'.format('H', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -214,7 +213,7 @@ def clicked9():
     global cell
     if turn == True and btn9["text"] == " ":
         btn9["text"] = "O"
-        send_data = '{}-{}'.format('I', 'YourTurn').encode()
+        send_data = '{}-{}'.format('I', 'TonTour').encode()
         client.send(send_data)
         print(send_data)
         turn = False
@@ -260,14 +259,14 @@ def check():  # check if a win case exists
     if b7 == b5 and b7 == b3 and b7 == "O" or b7 == b5 and b7 == b3 and b7 == "X":
         win(b7)
     if flag == 10:
-        messagebox.showinfo("Tie", "Match Tied!! Try again :)")
+        messagebox.showinfo("Égalité", "Match nul !! Essayez à nouveau :)")
         window.destroy()
 
 
 # Fonction pour afficher la boîte de dialogue lorsque le jeu est terminé
 def win(player):
-    ans = "Game complete " + player + " wins"
-    messagebox.showinfo("Congratulations", ans)
+    ans = "Partie terminée " + player + " a gagné !"
+    messagebox.showinfo("Félicitations", ans)
     window.destroy()  # is used to close the program
 
 # Création des boutons pour le jeu
