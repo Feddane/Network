@@ -32,11 +32,12 @@ lbl.grid(row=2, column=0)
 
 
 # Variables globales
-cell = ''
-turn = True
+cell = ''  #stocke la position du dernier coup joué.
+turn = True  # indique si c'est au tour du serveur de jouer.
 
 
 # Fonction pour recevoir les données du réseau
+#Elle reçoit les données du client, décode le message, met à jour la variable cell et appelle la fonction update.
 def recieveData():
     global cell
     global turn
@@ -46,6 +47,8 @@ def recieveData():
         dataa = data2.split('-')
         cell = dataa[0]
         update()
+
+        #Si le message est 'YourTurn', elle définit turn sur True.
         if dataa[1] == 'YourTurn':
             turn = True
             print(" server turn = "+ str(turn))
@@ -78,7 +81,7 @@ def update():
 # Fonction pour créer un thread
 def create_thread(target):
     thread = threading.Thread(target=target)
-    thread.daemon = True        #deamon threads are killed automatically when the program exits
+    thread.daemon = True        #démons sont des threads qui s'exécutent en arrière-plan et sont automatiquement tués lorsque le programme principal se termine.
     thread.start()
 
 
@@ -107,9 +110,10 @@ def clicked1():
         print(send_data)
         turn = False   #on stop la saisie du serveur
         check()
+    #le client effectue un mouvement
     elif turn == False and btn1["text"] == " " and cell == 'A':
         btn1["text"] = "O"
-        turn = True
+        turn = True #c'est le tour du serveur
         check()
 
 
@@ -239,12 +243,12 @@ def clicked9():
         check()
 
 
-flag = 1 #change a chaque fois
+flag = 1 # Elle est utilisée pour suivre le nombre total de coups joués dans la partie.
 
 # Fonction pour vérifier s'il y a un gagnant ou une égalité
 def check():    #check if a win case exists
     global flag
-    b1 = btn1["text"]       #get text in the button
+    b1 = btn1["text"]       #Ex: X ou O
     b2 = btn2["text"]
     b3 = btn3["text"]
     b4 = btn4["text"]
@@ -257,21 +261,22 @@ def check():    #check if a win case exists
 
     # Logique pour vérifier les différentes combinaisons gagnantes
     if b1 == b2 and b1 == b3 and b1 == "O" or  b1 == b2 and b1 == b3 and b1 == "X":
-        win(btn1["text"])  #x ou o
+        win(b1)  #x ou o
     if b4 == b5 and b4 == b6 and b4 == "O" or  b4 == b5 and b4 == b6 and b4 == "X":
-        win(btn4["text"])
+        win(b4)
     if b7 == b8 and b7 == b9 and b7 == "O" or  b7 == b8 and b7 == b9 and b7 == "X":
-        win(btn7["text"])
+        win(b7)
     if b1 == b4 and b1 == b7 and b1 == "O" or  b1 == b4 and b1 == b7 and b1 == "X":
-        win(btn1["text"])
+        win(b1)
     if b2 == b5 and b2 == b8 and b2 == "O" or  b2 == b5 and b2 == b8 and b2 == "X":
-        win(btn2["text"])
+        win(b2)
     if b3 == b6 and b3 == b9 and b3 == "O" or  b3 == b6 and b3 == b9 and b3 == "X":
-        win(btn3["text"])
+        win(b3)
     if b1 == b5 and b1 == b9 and b1 == "O" or  b1 == b5 and b1 == b9 and b1 == "X":
-        win(btn1["text"])
+        win(b1)
     if b7 == b5 and b7 == b3 and b7 == "O" or  b7 == b5 and b7 == b3 and b7 == "X":
-        win(btn7["text"])
+        win(b7)
+    #si les 9 tours ont ete atteint car flag = 1
     if flag == 10:
         messagebox.showinfo("Tie", "Match Tied!! Try again :)")
         window.destroy()

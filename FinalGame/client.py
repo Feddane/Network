@@ -28,6 +28,22 @@ lbl = Label(window, text="Player 2: O", font=('Helvetica', 10))
 lbl.grid(row=2, column=0)
 
 
+# Fonction pour recevoir les données du réseau
+def recieveData():
+    global cell
+    global turn
+    while True:
+        data, addr =  sock.recvfrom(1024) #loop to recieve the adress and the message
+        data2 = data.decode('utf-8')
+        dataa = data2.split('-')
+        cell = dataa[0]
+        update()
+        if dataa[1] == 'YourTurn':
+            print(cell + " Client turn")
+            turn = True
+            print(" Client turn = "+ str(turn))
+
+
 # Fonction pour mettre à jour l'interface graphique en fonction des données reçues
 def update():
     if cell == 'A':
@@ -51,20 +67,6 @@ def update():
     else:
         print("no matching char detected")
 
-# Fonction pour recevoir les données du réseau
-def recieveData():
-    global cell
-    global turn
-    while True:
-        data, addr =  sock.recvfrom(1024) #loop to recieve the adress and the message
-        data2 = data.decode('utf-8')
-        dataa = data2.split('-')
-        cell = dataa[0]
-        update()
-        if dataa[1] == 'YourTurn':
-            print(cell + " Client turn")
-            turn = True
-            print(" Client turn = "+ str(turn))
 
 # Fonction pour créer un thread
 def create_thread(target):
@@ -237,21 +239,21 @@ def check():    #check if a win case exists
 
     # Logique pour vérifier les différentes combinaisons gagnantes
     if b1 == b2 and b1 == b3 and b1 == "O" or  b1 == b2 and b1 == b3 and b1 == "X":
-        win(btn1["text"])
+        win(b1)
     if b4 == b5 and b4 == b6 and b4 == "O" or  b4 == b5 and b4 == b6 and b4 == "X":
-        win(btn4["text"])
+        win(b4)
     if b7 == b8 and b7 == b9 and b7 == "O" or  b7 == b8 and b7 == b9 and b7 == "X":
-        win(btn7["text"])
+        win(b7)
     if b1 == b4 and b1 == b7 and b1 == "O" or  b1 == b4 and b1 == b7 and b1 == "X":
-        win(btn1["text"])
+        win(b1)
     if b2 == b5 and b2 == b8 and b2 == "O" or  b2 == b5 and b2 == b8 and b2 == "X":
-        win(btn2["text"])
+        win(b2)
     if b3 == b6 and b3 == b9 and b3 == "O" or  b3 == b6 and b3 == b9 and b3 == "X":
-        win(btn3["text"])
+        win(b3)
     if b1 == b5 and b1 == b9 and b1 == "O" or  b1 == b5 and b1 == b9 and b1 == "X":
-        win(btn1["text"])
+        win(b1)
     if b7 == b5 and b7 == b3 and b7 == "O" or  b7 == b5 and b7 == b3 and b7 == "X":
-        win(btn7["text"])
+        win(b7)
     if flag == 10:
         messagebox.showinfo("Tie", "Match Tied!! Try again :)")
         window.destroy()
