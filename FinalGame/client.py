@@ -99,7 +99,7 @@ def clicked1():
 def clicked2():
     global turn
     global cell
-    if turn == True and btn2["text"] == " " and btn2["text"] == " ":
+    if turn == True and btn2["text"] == " ":
         btn2["text"] = "O"
         send_data = '{}-{}'.format('B', 'TonTour').encode()
         client.send(send_data)
@@ -299,3 +299,4 @@ btn9.grid(column=3, row=3)
 
 # Lancement de la boucle principale de l'interface graphique
 window.mainloop()
+
