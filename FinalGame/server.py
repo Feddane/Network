@@ -2,6 +2,7 @@ import socket
 import threading
 from tkinter import *
 from tkinter import messagebox
+import sys
 
 # Configuration du serveur
 host = '127.0.0.1'
@@ -87,9 +88,13 @@ def create_thread(target):
 def waitingforconnection():
     print("Thread créé")
     global conn, addr
-    conn, addr = server.accept()
-    print("Le client est connecté")
-    recieveData()
+    try:
+        conn, addr = server.accept()
+        print("Client connected")
+        recieveData()
+    except OSError:
+        print("Le client a fermé la connexion. Fin de la partie.")
+        sys.exit()
 
 
 # Création d'un thread pour attendre la connexion client

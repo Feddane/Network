@@ -2,6 +2,7 @@ import socket
 import threading
 from tkinter import *
 from tkinter import messagebox
+import sys
 
 
 host = "127.0.0.1"
@@ -37,14 +38,19 @@ def recieveData():
     global cell
     global turn
     while True:
-        data, addr = client.recvfrom(1024)  # loop to recieve the adress and the message
-        data2 = data.decode('utf-8')
-        dataa = data2.split('-')
-        cell = dataa[0]
-        update()
-        if dataa[1] == 'TonTour':
-            turn = True
-            print(" Client tour = " + str(turn))
+        try:
+            data, addr = client.recvfrom(1024)
+            data2 = data.decode('utf-8')
+            dataa = data2.split('-')
+            cell = dataa[0]
+            update()
+            if dataa[1] == 'TonTour':
+                turn = True
+                print(" Client tour = " + str(turn))
+        except ConnectionResetError:
+            print("Le serveur a fermé la connexion. Fin de la partie.")
+            client.close()  #ferme la connexion
+            sys.exit()
 
 
 # Fonction pour mettre à jour l'interface graphique en fonction des données reçues
