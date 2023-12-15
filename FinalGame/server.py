@@ -283,8 +283,12 @@ def check():  # check if a win case exists
         win(b7)
     # si les 9 tours ont ete atteint car flag = 1
     if flag == 10:
-        messagebox.showinfo("Égalité ", "Match nul !! Essayez à nouveau :)")
-        window.destroy()
+        # Afficher la boîte de dialogue pour le match nul
+        choice = messagebox.askquestion("Égalité", "Match nul !!\nVoulez-vous continuer la partie?")
+        if choice == 'yes':
+            reset_game()
+        else:
+            window.destroy()
 
 
 # Fonction pour afficher la boîte de dialogue lorsque le jeu est terminé
@@ -299,8 +303,29 @@ def win(player):
 
     ans += f"\n\nScore:\nJoueur 1 : {score_player1}\nJoueur 2: {score_player2}"
 
-    messagebox.showinfo("Félicitations", ans)
-    window.destroy()  # is used to close the program
+    # Ajout de la boîte de dialogue pour demander si les joueurs veulent continuer
+    choice = messagebox.askquestion("Félicitations", ans + "\nVoulez-vous continuer la partie?")
+
+    if choice == 'yes':
+        reset_game()
+    else:
+        window.destroy()  # Fermer la fenêtre principale
+
+# Fonction pour réinitialiser le jeu pour un nouveau tour
+def reset_game():
+    global flag
+    flag = 1
+
+    # Réinitialiser le texte des boutons
+    btn1["text"] = btn2["text"] = btn3["text"] = btn4["text"] = btn5["text"] = btn6["text"] = btn7["text"] = btn8["text"] = btn9["text"] = " "
+
+    # Réinitialiser la variable cell
+    global cell
+    cell = ""
+
+    # Réinitialiser le tour (serveur commence toujours)
+    global turn
+    turn = True
 
 
 
