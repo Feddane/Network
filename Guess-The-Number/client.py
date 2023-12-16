@@ -1,6 +1,15 @@
 from tkinter import *   # Importation des modules nécessaires
 import socket
 
+
+def center_window(window):
+    window.update_idletasks()
+    width = window.winfo_width()
+    height = window.winfo_height()
+    x = (window.winfo_screenwidth() // 2) - (width // 2)
+    y = (window.winfo_screenheight() // 2) - (height // 2)
+    window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+
 # Fonction du bouton de sortie (ferme la fenêtre actuelle et réaffiche la fenêtre principale)
 def exit_b(window):
     window.destroy()
@@ -67,6 +76,7 @@ def new_game():
     game_win.geometry("800x600")
     game_win.resizable(0, 0)
     game_win.title("Jeu")
+    center_window(game_win)
     canvas_game = Canvas(game_win, width=640, height=480)
     canvas_game.pack(fill="both", expand=True)
     canvas_game.create_image(0, 0, image=bg_game, anchor="nw")
@@ -114,6 +124,7 @@ def score_board():
     f.close()
     score_window = Toplevel(main_win)
     score_window.title("Score")
+    center_window(score_window)
     score_window.geometry("480x640")
     score_window.resizable(0, 0)
     canvas_score = Canvas(score_window, width=480, height=640)
@@ -145,6 +156,7 @@ def login():
     login_window.title("Connexion")
     login_window.geometry("400x250")
     login_window.resizable(0, 0)
+    center_window(login_window)
     canvas_login = Canvas(login_window, width=400, height=250)
     canvas_login.pack(fill="both", expand=True)
     canvas_login.create_image(0, 0, image=bg_login, anchor="nw")
@@ -178,6 +190,7 @@ main_win = Tk()
 main_win.geometry("640x480")
 main_win.resizable(0, 0)
 main_win.title("Bienvenue au Jeu!")
+center_window(main_win)
 
 user_name = ""
 bg_main = PhotoImage(file="images/menu.png")
