@@ -315,7 +315,7 @@ def reset_game():
     global turn
     turn = False
 
-    
+
 
 
 # Création des boutons pour le jeu
