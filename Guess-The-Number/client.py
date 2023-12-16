@@ -22,8 +22,8 @@ def new_game():
         canvas_game.itemconfig(attempt, text=("Essai : " + turn))
         b_submit.place_forget()
 
-        b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="#d262f9", relief="raised",
-                              activebackground="#7e3a95", state=NORMAL, font="Forte 16", command=reset)
+        b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="", relief="raised",
+                              activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
         b_new_game_l.place(x=400, y=400, anchor="center")
         place_score = user_name + " " + turn + "\n\n"
         f = open("scoreBoard.txt", "a")
@@ -41,8 +41,8 @@ def new_game():
             canvas_game.itemconfig(server_print, text="Vous avez perdu")
             b_submit.place_forget()
 
-            b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="#d262f9", relief="raised",
-                                  activebackground="#7e3a95", state=NORMAL, font="Forte 16", command=reset)
+            b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
+                                  activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
 
             b_new_game_l.place(x=400, y=400, anchor="center")
         elif "Win" in server_data:   # Nombre correct deviné
@@ -69,19 +69,20 @@ def new_game():
     canvas_game.pack(fill="both", expand=True)
     canvas_game.create_image(0, 0, image=bg_game, anchor="nw")
 
-    canvas_game.create_rectangle(50, 120, 750, 450, fill="#3f1d4a", outline='#edc0fc')
+    #rectangle
+    canvas_game.create_rectangle(50, 120, 750, 450, fill="#d8d1ca", outline='black')
 
-    canvas_game.create_text(400, 50, text="Devinez le nombre", fill="#edc0fc", font="Forte 38", justify="center",
+    canvas_game.create_text(400, 50, text="Devinez le nombre", fill="black", font="Forte 38", justify="center",
                             anchor="n")
-    attempt = canvas_game.create_text(60, 130, text="Essai : 1", fill="#edc0fc", font="Forte 18", justify="center",
+    attempt = canvas_game.create_text(60, 130, text="Essai : 1", fill="#8f736c", font="Forte 18", justify="center",
                                       anchor="nw")
 
-    canvas_game.create_text(60, 160, text=("Joueur : " + user_name), fill="#edc0fc", font="Forte 18", anchor="nw")
+    canvas_game.create_text(60, 160, text=("Joueur : " + user_name), fill="#8f736c", font="Forte 18", anchor="nw")
 
-    server_print = canvas_game.create_text(400, 180, text="Devinez le nombre entre\n1 et 20", fill="white",
+    server_print = canvas_game.create_text(400, 180, text="Devinez le nombre entre\n1 et 20", fill="black",
                                            font="Forte 34", justify="center", anchor="n")
 
-    user_entry = Entry(game_win, width=4, font="Forte 26 bold", justify="center", bg="#df91fa")
+    user_entry = Entry(game_win, width=4, font="Forte 26 bold", justify="center", bg="white")
     canvas_game.create_window(400, 300, window=user_entry)
 
     b_submit = Button(game_win, text="Soumettre", height=2, width=26, bg="white", relief="raised",
@@ -145,8 +146,8 @@ def login():
     canvas_login.pack(fill="both", expand=True)
     canvas_login.create_image(0, 0, image=bg_login, anchor="nw")
 
-    canvas_login.create_text(200, 40, text="Entrez votre nom", fill="#d262f9", font="Forte 26 bold", justify="center")
-    enter_name = Entry(canvas_login, width=16, font="Forte 26 bold", justify="center", bg="#df91fa")
+    canvas_login.create_text(200, 40, text="Entrez votre nom", fill="black", font="Forte 26 bold", justify="center")
+    enter_name = Entry(canvas_login, width=16, font="Forte 26 bold", justify="center", bg="white")
     canvas_login.create_window(200, 100, window=enter_name)
 
     b_start = Button(login_window, text="Commencer", height=1, width=20, bg="white", relief="raised",
@@ -169,6 +170,7 @@ def hover_in(e):
 def hover_out(e):
     e.widget["background"] = "white"
 
+#main window
 main_win = Tk()
 main_win.geometry("640x480")
 main_win.resizable(0, 0)
@@ -184,9 +186,9 @@ canvas_main = Canvas(main_win, width=640, height=480)
 canvas_main.pack(fill="both", expand=True)
 canvas_main.create_image(0, 0, image=bg_main, anchor="nw")
 
-canvas_main.create_text(320, 60, text="Devinez le Nombre", fill="#3f1d4a", font="Forte 60 bold", justify="center",
-                        anchor="n")
-canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="#edc0fc", font="Forte 38 bold", justify="center",
+# canvas_main.create_text(320, 60, text="Devinez le Nombre", fill="#3f1d4a", font="Forte 60 bold", justify="center",
+#                         anchor="n")
+canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="black", font="Forte 38 bold", justify="center",
                         anchor="n")
 
 #les boutons de main window
