@@ -84,15 +84,15 @@ def new_game():
     user_entry = Entry(game_win, width=4, font="Forte 26 bold", justify="center", bg="#df91fa")
     canvas_game.create_window(400, 300, window=user_entry)
 
-    b_submit = Button(game_win, text="Soumettre", height=2, width=26, bg="#d262f9", relief="raised",
-                      activebackground="#7e3a95", state=NORMAL, font="Forte 16", command=send_to_server)
+    b_submit = Button(game_win, text="Soumettre", height=2, width=26, bg="white", relief="raised",
+                      activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=send_to_server)
 
     b_submit.place(x=400, y=400, anchor="center")
     b_submit.bind("<Enter>", hover_in)
     b_submit.bind("<Leave>", hover_out)
 
-    b_exit_score = Button(game_win, text="Quitter", height=2, width=26, bg="#d262f9", relief="raised",
-                          activebackground="#7e3a95", command=lambda: exit_b(game_win), state=NORMAL, font="Forte 16")
+    b_exit_score = Button(game_win, text="Quitter", height=2, width=26, bg="white", relief="raised",
+                          activebackground="#eddbd6", command=lambda: exit_b(game_win), state=NORMAL, font="Forte 16")
 
     b_exit_score.place(x=400, y=530, anchor="center")
     b_exit_score.bind("<Enter>", hover_in)
@@ -116,11 +116,11 @@ def score_board():
     canvas_score.pack(fill="both", expand=True)
     canvas_score.create_image(0, 0, image=bg_score, anchor="nw")
 
-    canvas_score.create_text(240, 100, text="Tableau des Scores", fill="#d262f9", font="Forte 30 bold",
+    canvas_score.create_text(240, 100, text="Tableau des Scores", fill="black", font="Forte 30 bold",
                              justify="center")
     canvas_score.create_text(240, 240, text=scoreList, fill="white", font="Forte 18", justify="center", anchor="n")
-    b_exit_score = Button(score_window, text="Quitter", height=2, width=26, bg="#d262f9", relief="raised",
-                          activebackground="#7e3a95", command=lambda: exit_b(score_window), state=NORMAL, font="Forte 16")
+    b_exit_score = Button(score_window, text="Quitter", height=2, width=26, bg="white", relief="raised",
+                          activebackground="#eddbd6", command=lambda: exit_b(score_window), state=NORMAL, font="Forte 16")
 
     b_exit_score.place(x=240, y=580, anchor="center")
     b_exit_score.bind("<Enter>", hover_in)
@@ -149,10 +149,10 @@ def login():
     enter_name = Entry(canvas_login, width=16, font="Forte 26 bold", justify="center", bg="#df91fa")
     canvas_login.create_window(200, 100, window=enter_name)
 
-    b_start = Button(login_window, text="Commencer", height=1, width=20, bg="#d262f9", relief="raised",
-                     activebackground="#7e3a95", command=start_b, state=NORMAL, font="Forte 16")
-    b_exit_login = Button(login_window, text="Quitter", height=1, width=20, bg="#d262f9", relief="raised",
-                          activebackground="#7e3a95", command=lambda: exit_b(login_window),
+    b_start = Button(login_window, text="Commencer", height=1, width=20, bg="white", relief="raised",
+                     activebackground="#eddbd6", command=start_b, state=NORMAL, font="Forte 16")
+    b_exit_login = Button(login_window, text="Quitter", height=1, width=20, bg="white", relief="raised",
+                          activebackground="#eddbd6", command=lambda: exit_b(login_window),
                           state=NORMAL, font="Forte 16")
 
     b_start.place(x=200, y=170, anchor="center")
@@ -164,10 +164,10 @@ def login():
     b_exit_login.bind("<Leave>", hover_out)
 
 def hover_in(e):
-    e.widget["background"] = "#df91fa"
+    e.widget["background"] = "#eddbd6"
 
 def hover_out(e):
-    e.widget["background"] = "#d262f9"
+    e.widget["background"] = "white"
 
 main_win = Tk()
 main_win.geometry("640x480")
@@ -189,12 +189,15 @@ canvas_main.create_text(320, 60, text="Devinez le Nombre", fill="#3f1d4a", font=
 canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="#edc0fc", font="Forte 38 bold", justify="center",
                         anchor="n")
 
-b_new_game = Button(canvas_main, text="Nouveau Jeu", height=2, width=26, bg="#d262f9", relief="raised",
-                    activebackground="#7e3a95", command=login, state=NORMAL, font="Forte 16")
-b_score = Button(canvas_main, text="Score", height=2, width=26, bg="#d262f9", relief="raised",
-                 activebackground="#7e3a95", command=score_board, state=NORMAL, font="Forte 16")
-b_exit = Button(canvas_main, text="Quitter", height=2, width=26, bg="#d262f9", relief="raised",
-                activebackground="#7e3a95", command=main_win.destroy, state=NORMAL, font="Forte 16")
+#les boutons de main window
+b_new_game = Button(canvas_main, text="Nouveau Jeu", height=2, width=26, bg="white", fg="black", relief="raised",
+                    activebackground="#eddbd6", command=login, state=NORMAL, font="Forte 16")
+b_score = Button(canvas_main, text="Score", height=2, width=26, bg="white", fg="black", relief="raised",
+                 activebackground="#eddbd6", command=score_board, state=NORMAL, font="Forte 16")
+b_exit = Button(canvas_main, text="Quitter", height=2, width=26, bg="white", fg="black", relief="raised",
+                activebackground="#eddbd6", command=main_win.destroy, state=NORMAL, font="Forte 16")
+
+
 
 b_new_game.place(x=320, y=220, anchor="center")
 b_new_game.bind("<Enter>", hover_in)
