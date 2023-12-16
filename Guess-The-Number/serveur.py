@@ -2,7 +2,7 @@ import socket       # Modules utilisés
 import random
 
 tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   # Création du socket
-tcpSocket.bind(("127.0.0.1", 8000))   # Liaison du socket à l'adresse IP locale et au port 8000
+tcpSocket.bind(("127.0.0.1", 8001))  # Liaison du socket à l'adresse IP locale et au port 8000
 
 while True:
     tcpSocket.listen(1)   # Attente d'une connexion (1 connexion à la fois)

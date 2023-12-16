@@ -32,14 +32,14 @@ def new_game():
 
     # Fonction responsable de la session de socket
     def send_to_server():
-        user_data = user_entry.get()   # Sauvegarde du champ d'entrée dans une variable
-        tcpSocket.send(user_data.encode())   # Envoi au serveur
+        user_data = user_entry.get()   # Sauvegarde du champ d'entrée dans une variable ex:15
+        tcpSocket.send(user_data.encode())   # Envoi au serveur envoi 15 au serveur
         server_data = tcpSocket.recv(2048).decode()   # Réception du serveur
-        user_entry.delete(0, END)   # Effacer le champ d'entrée
+        user_entry.delete(0, END)   # Effacer le champ d'entrée apres avoir envoyer la donnee au serveur (15)
 
         if "Lost" in server_data:   # Scénario où le joueur a perdu
             canvas_game.itemconfig(server_print, text="Vous avez perdu")
-            b_submit.place_forget()
+            b_submit.place_forget()   # Désactiver le bouton soumettre
 
             b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
                                   activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
@@ -49,7 +49,7 @@ def new_game():
             winner(server_data)
         elif "High" in server_data:   # Nombre deviné trop élevé
             canvas_game.itemconfig(server_print, text="Trop élevé")
-            turn = server_data[-1]
+            turn = server_data[-1]  #le nombre de tour diminue
             canvas_game.itemconfig(attempt, text=("Essai : " + turn))
         elif "Low" in server_data:   # Nombre deviné trop bas
             canvas_game.itemconfig(server_print, text="Trop bas")
@@ -58,9 +58,11 @@ def new_game():
         else:
             canvas_game.itemconfig(server_print, text=server_data)
 
+    #desactiver au debut du jeu pour l'utilisateur ne commence un nouveau jeu ou ne consulte le score pendant que le jeu est en cours
     b_new_game["state"] = "disable"   # Désactiver le bouton du menu principal
     b_score["state"] = "disable"   # Désactiver le bouton du menu principal
 
+    #game_window
     game_win = Toplevel(main_win)
     game_win.geometry("800x600")
     game_win.resizable(0, 0)
@@ -99,8 +101,9 @@ def new_game():
     b_exit_score.bind("<Enter>", hover_in)
     b_exit_score.bind("<Leave>", hover_out)
 
+    #Definir socket client
     tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcpSocket.connect(("127.0.0.1", 8000))
+    tcpSocket.connect(("127.0.0.1", 8001))
 
 # Fenêtre du tableau des scores
 def score_board():
@@ -119,7 +122,7 @@ def score_board():
 
     canvas_score.create_text(240, 100, text="Tableau des Scores", fill="black", font="Forte 30 bold",
                              justify="center")
-    canvas_score.create_text(240, 240, text=scoreList, fill="white", font="Forte 18", justify="center", anchor="n")
+    canvas_score.create_text(240, 240, text=scoreList, fill="black", font="Forte 18", justify="center", anchor="n")
     b_exit_score = Button(score_window, text="Quitter", height=2, width=26, bg="white", relief="raised",
                           activebackground="#eddbd6", command=lambda: exit_b(score_window), state=NORMAL, font="Forte 16")
 
@@ -174,7 +177,7 @@ def hover_out(e):
 main_win = Tk()
 main_win.geometry("640x480")
 main_win.resizable(0, 0)
-main_win.title("Jeu de Nombre en Direct")
+main_win.title("Bienvenue au Jeu!")
 
 user_name = ""
 bg_main = PhotoImage(file="images/menu.png")
@@ -186,9 +189,8 @@ canvas_main = Canvas(main_win, width=640, height=480)
 canvas_main.pack(fill="both", expand=True)
 canvas_main.create_image(0, 0, image=bg_main, anchor="nw")
 
-# canvas_main.create_text(320, 60, text="Devinez le Nombre", fill="#3f1d4a", font="Forte 60 bold", justify="center",
-#                         anchor="n")
-canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="black", font="Forte 38 bold", justify="center",
+
+canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="black", font="Forte 30 bold", justify="center",
                         anchor="n")
 
 #les boutons de main window
@@ -214,3 +216,6 @@ b_exit.bind("<Enter>", hover_in)
 b_exit.bind("<Leave>", hover_out)
 
 main_win.mainloop()
+
+#item_config == mettre a jour le texte afficher
+#main_win.iconify() ==  minimiser la fenêtre principale, c'est-à-dire pour la réduire à une icône dans la barre des tâches (ou la barre des applications, selon le système d'exploitation).
