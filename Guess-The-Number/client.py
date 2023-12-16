@@ -15,17 +15,17 @@ def new_game():
         game_win.destroy()
         new_game()
 
-    # Fonction gagnante qui met à jour le tableau des scores
+    # Winner function updates Score Board
     def winner(_server_data):
         canvas_game.itemconfig(server_print, text="Vous avez gagné")
         turn = _server_data[-1]
-        canvas_game.itemconfig(attempt, text=("Essai : " + turn))
+        canvas_game.itemconfig(attempt, text=("Attempt: " + turn))
         b_submit.place_forget()
 
-        b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="", relief="raised",
+        b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
                               activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
         b_new_game_l.place(x=400, y=400, anchor="center")
-        place_score = user_name + " " + turn + "\n\n"
+        place_score = user_name+" a gagné en "+turn+" coups\n"
         f = open("scoreBoard.txt", "a")
         f.write(place_score)
         f.close()
