@@ -1,12 +1,12 @@
 import socket       # Modules utilisés
 import random
 
-tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   # Création du socket
-tcpSocket.bind(("127.0.0.1", 8001))  # Liaison du socket à l'adresse IP locale et au port 8000
+serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   # Création du socket
+serveur.bind(("127.0.0.1", 8001))  # Liaison du socket à l'adresse IP locale et au port 8000
 
 while True:
-    tcpSocket.listen(1)   # Attente d'une connexion (1 connexion à la fois)
-    (client, (ip, port)) = tcpSocket.accept()   # Acceptation de la connexion
+    serveur.listen(1)   # Attente d'une connexion (1 connexion à la fois)
+    (client, (ip, port)) = serveur.accept()   # Acceptation de la connexion
     print("Connecté")
 
     num = random.randint(1, 20)   # Génération d'un nombre aléatoire entre 1 et 20

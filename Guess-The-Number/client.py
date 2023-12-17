@@ -1,7 +1,6 @@
 from tkinter import *   # Importation des modules nécessaires
 import socket
 
-
 def center_window(window):
     window.update_idletasks()
     width = window.winfo_width()
@@ -42,8 +41,8 @@ def new_game():
     # Fonction responsable de la session de socket
     def send_to_server():
         user_data = user_entry.get()   # Sauvegarde du champ d'entrée dans une variable ex:15
-        tcpSocket.send(user_data.encode())   # Envoi au serveur envoi 15 au serveur
-        server_data = tcpSocket.recv(2048).decode()   # Réception du serveur
+        client.send(user_data.encode())   # Envoi au serveur envoi 15 au serveur
+        server_data = client.recv(2048).decode()   # Réception du serveur
         user_entry.delete(0, END)   # Effacer le champ d'entrée apres avoir envoyer la donnee au serveur (15)
 
         if "Lost" in server_data:   # Scénario où le joueur a perdu
@@ -112,8 +111,8 @@ def new_game():
     b_exit_score.bind("<Leave>", hover_out)
 
     #Definir socket client
-    tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcpSocket.connect(("127.0.0.1", 8001))
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(("127.0.0.1", 8001))
 
 # Fenêtre du tableau des scores
 def score_board():
@@ -202,7 +201,6 @@ canvas_main = Canvas(main_win, width=640, height=480)
 canvas_main.pack(fill="both", expand=True)
 canvas_main.create_image(0, 0, image=bg_main, anchor="nw")
 
-
 canvas_main.create_text(320, 80, text="Devinez le Nombre", fill="black", font="Forte 30 bold", justify="center",
                         anchor="n")
 
@@ -213,8 +211,6 @@ b_score = Button(canvas_main, text="Score", height=2, width=26, bg="white", fg="
                  activebackground="#eddbd6", command=score_board, state=NORMAL, font="Forte 16")
 b_exit = Button(canvas_main, text="Quitter", height=2, width=26, bg="white", fg="black", relief="raised",
                 activebackground="#eddbd6", command=main_win.destroy, state=NORMAL, font="Forte 16")
-
-
 
 b_new_game.place(x=320, y=220, anchor="center")
 b_new_game.bind("<Enter>", hover_in)
@@ -229,6 +225,3 @@ b_exit.bind("<Enter>", hover_in)
 b_exit.bind("<Leave>", hover_out)
 
 main_win.mainloop()
-
-#item_config == mettre a jour le texte afficher
-#main_win.iconify() ==  minimiser la fenêtre principale, c'est-à-dire pour la réduire à une icône dans la barre des tâches (ou la barre des applications, selon le système d'exploitation).
