@@ -113,6 +113,9 @@ def new_game():
     #Definir socket client
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(("127.0.0.1", 8001))
+    
+    # Envoyer le nom du joueur au serveur
+    client.send(user_name.encode())
 
 # Fenêtre du tableau des scores
 def score_board():

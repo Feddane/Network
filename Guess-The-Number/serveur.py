@@ -6,9 +6,13 @@ serveur.bind(("127.0.0.1", 8001))  # Liaison du socket à l'adresse IP locale et
 
 while True:
     serveur.listen(1)   # Attente d'une connexion (1 connexion à la fois)
+    print("Attente de connexion...")
     (client, (ip, port)) = serveur.accept()   # Acceptation de la connexion
-    print("Connecté")
-
+    
+    # Recevoir le nom du joueur
+    user_name = client.recv(1024).decode()
+    print(f"{user_name} s'est connecté")  # Affiche le nom du joueur qui s'est connecté et le message
+    
     num = random.randint(1, 20)   # Génération d'un nombre aléatoire entre 1 et 20
     print("Le nombre aléatoire est ", num)
     turn = 0
