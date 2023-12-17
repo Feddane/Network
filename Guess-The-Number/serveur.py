@@ -44,6 +44,7 @@ def handle_client(client, nom_utilisateur):
     disconnect_user(nom_utilisateur)  # Appel de la fonction pour gérer la déconnexion
     client.close()
 
+# Fonction pour gérer la déconnexion
 def disconnect_user(nom_utilisateur):
     if nom_utilisateur in clients_connectes:
         # Supprime le client de la liste des clients connectés
