@@ -1,5 +1,6 @@
 from tkinter import *   # Importation des modules nécessaires
 import socket
+import threading
 
 def center_window(window):
     window.update_idletasks()
@@ -40,31 +41,37 @@ def new_game():
 
     # Fonction responsable de la session de socket
     def send_to_server():
-        user_data = user_entry.get()   # Sauvegarde du champ d'entrée dans une variable ex:15
-        client.send(user_data.encode())   # Envoi au serveur envoi 15 au serveur
-        server_data = client.recv(2048).decode()   # Réception du serveur
-        user_entry.delete(0, END)   # Effacer le champ d'entrée apres avoir envoyer la donnee au serveur (15)
+        def communication_thread():
+            user_data = user_entry.get()
+            client.send(user_data.encode())
+            server_data = client.recv(2048).decode()
+            user_entry.delete(0, END)
 
-        if "Lost" in server_data:   # Scénario où le joueur a perdu
-            canvas_game.itemconfig(server_print, text="Vous avez perdu")
-            b_submit.place_forget()   # Désactiver le bouton soumettre
+            if "Lost" in server_data:
+                canvas_game.itemconfig(server_print, text="Vous avez perdu")
+                b_submit.place_forget()
+                b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
+                                    activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
+                b_new_game_l.place(x=400, y=400, anchor="center")
+                place_score = user_name+" a gagné en "+turn+" coups\n"
+                f = open("scoreBoard.txt", "a")
+                f.write(place_score)
+                f.close()
+            elif "Win" in server_data:
+                winner(server_data)
+            elif "High" in server_data:
+                canvas_game.itemconfig(server_print, text="Trop élevé")
+                turn = server_data[-1]
+                canvas_game.itemconfig(attempt, text=("Essai : " + turn))
+            elif "Low" in server_data:
+                canvas_game.itemconfig(server_print, text="Trop bas")
+                turn = server_data[-1]
+                canvas_game.itemconfig(attempt, text=("Essai : " + turn))
+            else:
+                canvas_game.itemconfig(server_print, text=server_data)
 
-            b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
-                                  activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
+        threading.Thread(target=communication_thread).start()
 
-            b_new_game_l.place(x=400, y=400, anchor="center")
-        elif "Win" in server_data:   # Nombre correct deviné
-            winner(server_data)
-        elif "High" in server_data:   # Nombre deviné trop élevé
-            canvas_game.itemconfig(server_print, text="Trop élevé")
-            turn = server_data[-1]  #le nombre de tour diminue
-            canvas_game.itemconfig(attempt, text=("Essai : " + turn))
-        elif "Low" in server_data:   # Nombre deviné trop bas
-            canvas_game.itemconfig(server_print, text="Trop bas")
-            turn = server_data[-1]
-            canvas_game.itemconfig(attempt, text=("Essai : " + turn))
-        else:
-            canvas_game.itemconfig(server_print, text=server_data)
 
     #desactiver au debut du jeu pour l'utilisateur ne commence un nouveau jeu ou ne consulte le score pendant que le jeu est en cours
     b_new_game["state"] = "disable"   # Désactiver le bouton du menu principal
