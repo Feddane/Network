@@ -49,20 +49,20 @@ def new_game():
             # efface le contenu de la zone de saisie user_entry après l'envoi des données.
             user_entry.delete(0, END)
 
-            if "Lost" in server_data:
+            if "Perdu" in server_data:
                 canvas_game.itemconfig(server_print, text="Vous avez perdu")
                 b_submit.place_forget()
                 b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
                                     activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
                 b_new_game_l.place(x=400, y=400, anchor="center")
 
-            elif "Win" in server_data:
+            elif "Gagne" in server_data:
                 winner(server_data)
-            elif "High" in server_data:
+            elif "TropHaut" in server_data:
                 canvas_game.itemconfig(server_print, text="Trop élevé")
                 turn = server_data[-1]
                 canvas_game.itemconfig(attempt, text=("Essai : " + turn))
-            elif "Low" in server_data:
+            elif "TropBas" in server_data:
                 canvas_game.itemconfig(server_print, text="Trop bas")
                 turn = server_data[-1]
                 canvas_game.itemconfig(attempt, text=("Essai : " + turn))
