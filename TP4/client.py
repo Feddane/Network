@@ -20,7 +20,7 @@ def get_user_choice():
 
 # Définir l'hôte (adresse IP) et le port sur lequel le client se connectera
 host = '127.0.0.1'
-port = 12345
+port = 12346
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

@@ -4,7 +4,7 @@ import threading
 # Fonction de diffusion du message à tous les clients
 def broadcast(message, excluded_client=None):
     for client in clients[:]:  # Utilisation d'une copie de la liste des clients
-        if client != excluded_client and client.fileno() != -1:
+        if client != excluded_client and client.fileno() != -1: #si la connexion du client est toujours ouverte 
             try:
                 client.send(message.encode('utf-8'))
             except (OSError, BrokenPipeError):
@@ -92,7 +92,7 @@ def reset_choices():
 
 # Initialiser le serveur
 host = '127.0.0.1'
-port = 12345
+port = 12346
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
