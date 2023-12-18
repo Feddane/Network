@@ -34,6 +34,7 @@ def new_game():
         b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
                               activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
         b_new_game_l.place(x=400, y=400, anchor="center")
+
         place_score = user_name+" a gagné en "+turn+" coups\n"
         f = open("scoreBoard.txt", "a")
         f.write(place_score)
@@ -42,9 +43,10 @@ def new_game():
     # Fonction responsable de la session de socket
     def send_to_server():
         def communication_thread():
-            user_data = user_entry.get()
+            user_data = user_entry.get()  #par exemple : 15
             client.send(user_data.encode())
             server_data = client.recv(2048).decode()
+            # efface le contenu de la zone de saisie user_entry après l'envoi des données.
             user_entry.delete(0, END)
 
             if "Lost" in server_data:
@@ -53,10 +55,7 @@ def new_game():
                 b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
                                     activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
                 b_new_game_l.place(x=400, y=400, anchor="center")
-                place_score = user_name+" a gagné en "+turn+" coups\n"
-                f = open("scoreBoard.txt", "a")
-                f.write(place_score)
-                f.close()
+
             elif "Win" in server_data:
                 winner(server_data)
             elif "High" in server_data:
@@ -77,7 +76,7 @@ def new_game():
     b_new_game["state"] = "disable"   # Désactiver le bouton du menu principal
     b_score["state"] = "disable"   # Désactiver le bouton du menu principal
 
-    #game_window
+    #creation du game_window
     game_win = Toplevel(main_win)
     game_win.geometry("800x600")
     game_win.resizable(0, 0)
@@ -98,7 +97,7 @@ def new_game():
     canvas_game.create_text(60, 160, text=("Joueur : " + user_name), fill="#8f736c", font="Forte 18", anchor="nw")
 
     server_print = canvas_game.create_text(400, 180, text="Devinez le nombre entre\n1 et 20", fill="black",
-                                           font="Forte 34", justify="center", anchor="n")
+                                           font="Forte 30", justify="center", anchor="n")
 
     user_entry = Entry(game_win, width=4, font="Forte 26 bold", justify="center", bg="white")
     canvas_game.create_window(400, 300, window=user_entry)
@@ -131,6 +130,7 @@ def score_board():
     f = open("scoreBoard.txt", "r")
     scoreList = f.read()
     f.close()
+
     score_window = Toplevel(main_win)
     score_window.title("Score")
     center_window(score_window)
@@ -171,7 +171,7 @@ def login():
     canvas_login.create_image(0, 0, image=bg_login, anchor="nw")
 
     canvas_login.create_text(200, 40, text="Entrez votre nom", fill="black", font="Forte 26 bold", justify="center")
-    enter_name = Entry(canvas_login, width=16, font="Forte 26 bold", justify="center", bg="white")
+    enter_name = Entry(canvas_login, width=16, font="Arial 20 bold", justify="center", bg="white")
     canvas_login.create_window(200, 100, window=enter_name)
 
     b_start = Button(login_window, text="Commencer", height=1, width=20, bg="white", relief="raised",
@@ -230,7 +230,7 @@ b_score.place(x=320, y=290, anchor="center")
 b_score.bind("<Enter>", hover_in)
 b_score.bind("<Leave>", hover_out)
 
-b_exit.place(x=320, y=380, anchor="center")
+b_exit.place(x=320, y=360, anchor="center")
 b_exit.bind("<Enter>", hover_in)
 b_exit.bind("<Leave>", hover_out)
 
