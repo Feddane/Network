@@ -4,6 +4,7 @@ import random
 
 clients_connectes = {}  # Dictionnaire pour suivre les clients connectés
 
+#Fonction pour gérer le client
 def handle_client(client, nom_utilisateur):
     # Génère un nombre aléatoire entre 1 et 20 pour le client
     num = random.randint(1, 20)

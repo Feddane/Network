@@ -2,6 +2,7 @@ from tkinter import *   # Importation des modules nécessaires
 import socket
 import threading
 
+#Fonction pour centrer les fenêtres
 def center_window(window):
     window.update_idletasks()
     width = window.winfo_width()
