@@ -43,6 +43,10 @@ try:
         message = client.recv(1024).decode('utf-8')
         print(message)
 
+        # une condition pour sortir de la boucle si le joueur a quitté
+        if "a quitte le jeu" in message:
+            break
+
 except KeyboardInterrupt:
     print("Jeu interrompu.")
 finally:

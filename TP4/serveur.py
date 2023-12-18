@@ -2,10 +2,17 @@ import socket
 import threading
 
 # Fonction de diffusion du message à tous les clients
-def broadcast(message):
-    for client in clients:
-        client.send(message.encode('utf-8'))
+def broadcast(message, excluded_client=None):
+    for client in clients[:]:  # Utilisation d'une copie de la liste des clients
+        if client != excluded_client and client.fileno() != -1:
+            try:
+                client.send(message.encode('utf-8'))
+            except (OSError, BrokenPipeError):
+                # Gérer les erreurs liées à l'envoi sur une connexion fermée
+                clients.remove(client)
 
+
+# Fonction pour gérer le client
 def handle_client(conn, player):
     global current_round
 
@@ -16,29 +23,38 @@ def handle_client(conn, player):
     # Ajouter le nom du joueur à la liste des noms de joueurs
     player_names.append(player_name)
 
-    while True:
-        # Recevoir le choix du joueur
-        choice = conn.recv(1024).decode('utf-8')
-        if not choice or choice.lower() == 'exit':
-            print(f"{player_name} a quitte le jeu.")  # Afficher que le joueur a quitté le jeu
-            break
+    try:
+        while True:
+            # Recevoir le choix du joueur
+            choice = conn.recv(1024).decode('utf-8')
+            if not choice or choice.lower() == 'exit':
+                print(f"{player_name} a quitte le jeu.")  # Afficher que le joueur a quitté le jeu
+                # Informer tous les autres joueurs que le joueur a quitté
+                message = f"{player_name} a quitte le jeu. Fin du jeu!"
+                broadcast(message, excluded_client=conn)
+                break
 
-        print(f"choix de {player_name}: {choice}")
+            print(f"choix de {player_name}: {choice}")
 
-        # Enregistrer le choix du joueur
-        choices[player - 1] = choice
+            # Enregistrer le choix du joueur
+            choices[player - 1] = choice
 
-        # Vérifier si les deux joueurs ont fait leur choix
-        if all(choices):
-            # Incrémenter le tour actuel
-            current_round += 1
+            # Vérifier si les deux joueurs ont fait leur choix
+            if all(choices):
+                # Incrémenter le tour actuel
+                current_round += 1
 
-            determine_winner()
-            reset_choices()
+                determine_winner()
+                reset_choices()
 
-    # Afficher "Fin du jeu" lorsque le joueur quitte
-    print("Fin du jeu")
-    conn.close()
+    except (OSError, ConnectionResetError):
+        print(f"Erreur de communication avec {player_name}. Le joueur a quitte de maniere inattendue.")
+    finally:
+        # Retirer le client de la liste des clients lorsqu'il se déconnecte
+        if conn in clients:
+            clients.remove(conn)
+        print("fin du jeu")
+        conn.close()
 
 
 
