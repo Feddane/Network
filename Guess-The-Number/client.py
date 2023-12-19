@@ -44,31 +44,40 @@ def new_game():
     # Fonction responsable de la session de socket
     def send_to_server():
         def communication_thread():
-            user_data = user_entry.get()  #par exemple : 15
-            client.send(user_data.encode())
-            server_data = client.recv(2048).decode()
-            # efface le contenu de la zone de saisie user_entry après l'envoi des données.
-            user_entry.delete(0, END)
+            user_data = user_entry.get()
+            try:
+                user_data = int(user_data)
+                if 1 <= user_data <= 20:
+                    client.send(str(user_data).encode())
+                    server_data = client.recv(2048).decode()
+                    user_entry.delete(0, END)
 
-            if "Perdu" in server_data:
-                canvas_game.itemconfig(server_print, text="Vous avez perdu")
-                b_submit.place_forget()
-                b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white", relief="raised",
-                                    activebackground="#eddbd6", state=NORMAL, font="Forte 16", command=reset)
-                b_new_game_l.place(x=400, y=400, anchor="center")
+                    if "Perdu" in server_data:
+                        canvas_game.itemconfig(server_print, text="Vous avez perdu")
+                        b_submit.place_forget()
+                        b_new_game_l = Button(game_win, text="Nouveau Jeu", height=2, width=26, bg="white",
+                                            relief="raised", activebackground="#eddbd6", state=NORMAL,
+                                            font="Forte 16", command=reset)
+                        b_new_game_l.place(x=400, y=400, anchor="center")
 
-            elif "Gagne" in server_data:
-                winner(server_data)
-            elif "TropHaut" in server_data:
-                canvas_game.itemconfig(server_print, text="Trop élevé")
-                turn = server_data[-1]
-                canvas_game.itemconfig(attempt, text=("Essai : " + turn))
-            elif "TropBas" in server_data:
-                canvas_game.itemconfig(server_print, text="Trop bas")
-                turn = server_data[-1]
-                canvas_game.itemconfig(attempt, text=("Essai : " + turn))
-            else:
-                canvas_game.itemconfig(server_print, text=server_data)
+                    elif "Gagne" in server_data:
+                        winner(server_data)
+                    elif "TropHaut" in server_data:
+                        canvas_game.itemconfig(server_print, text="Trop élevé")
+                        turn = server_data[-1]
+                        canvas_game.itemconfig(attempt, text=("Essai : " + turn))
+                    elif "TropBas" in server_data:
+                        canvas_game.itemconfig(server_print, text="Trop bas")
+                        turn = server_data[-1]
+                        canvas_game.itemconfig(attempt, text=("Essai : " + turn))
+                    else:
+                        canvas_game.itemconfig(server_print, text=server_data)
+                else:
+                    # Afficher un message si le nombre n'est pas entre 1 et 20
+                    canvas_game.itemconfig(server_print, text="Entrez un nombre entre 1 et 20")
+            except ValueError:
+                # Afficher un message si l'entrée n'est pas un nombre entier
+                canvas_game.itemconfig(server_print, text="Entrez un nombre entier entre 1 et 20")
 
         threading.Thread(target=communication_thread).start()
 
