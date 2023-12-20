@@ -54,7 +54,7 @@ def disconnect_user(nom_utilisateur):
 
 def main():
     serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serveur.bind(("127.0.0.1", 8001))
+    serveur.bind(("127.0.0.1", 8000))
     serveur.listen()
 
     print("Attente de connexions...")
